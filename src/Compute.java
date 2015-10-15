@@ -8,7 +8,8 @@ public class Compute {
 	private int n, t;
 	private String mFilename= null;
 	private ArrayList<Term> functionterm= new ArrayList<Term>();
-	private ArrayList<Variable> var= new ArrayList<Variable>();
+//	private ArrayList<Variable> var= new ArrayList<Variable>();
+	private ArrayList<String> var= new ArrayList<String>();
 	private int[][] mat= null;
 	private int[] coeff= null;
 	private int[] order= null;
@@ -29,26 +30,31 @@ public class Compute {
 			int var1ind= -1, var2ind= -1;
 			
 			for(int j=0; j<var.size(); j++){
-				Variable tempvar= var.get(j);
-				if(tempvar.getName().equals(var1)){
-					tempvar.incIntersect();
-					var1ind= j;
-				}
-				if(tempvar.getName().equals(var2)){
-					tempvar.incIntersect();
-					var2ind= j;
-				}
+//				Variable tempvar= var.get(j);
+				String tempvar= var.get(j);
+//				if(tempvar.getName().equals(var1)){
+//					tempvar.incIntersect();
+//					var1ind= j;
+//				}
+//				if(tempvar.getName().equals(var2)){
+//					tempvar.incIntersect();
+//					var2ind= j;
+//				}
+				if(tempvar.equals(var1)) var1ind= j;
+				if(tempvar.equals(var2)) var2ind= j;
 			}
 			
 			if(var1ind == -1){
-				Variable variable= new Variable(var1);
+//				Variable variable= new Variable(var1);
 				var1ind= var.size();
-				var.add(variable);
+//				var.add(variable);
+				var.add(var1);
 			}
 			if(var2ind == -1){
-				Variable variable= new Variable(var2);
+//				Variable variable= new Variable(var2);
 				var2ind= var.size();
-				var.add(variable);
+//				var.add(variable);
+				var.add(var2);
 			}
 			
 			Term current= new Term();
@@ -78,9 +84,9 @@ public class Compute {
 				} else if(smallest == current && order[j] < order[ind]) ind= j;
 			}
 			if(i != ind){
-				int temp= order[i];
-				order[i]= order[ind];
-				order[ind]= temp;
+				order[i] ^= order[ind];
+				order[ind] ^= order[i];
+				order[i] ^= order[ind];
 			}
 		}
 		for(int i=0; i<n; i++){
@@ -105,7 +111,9 @@ public class Compute {
 	private boolean checkZero(int n){ return n==0?false:true; }
 	private int getOne(int n, int len){
 		int cnt= 0;
-		for(int i=0; i<len; i++) cnt += (checkZero(n&(1<<i))?1:0);
+		for(int i=0; i<len; i++)
+			if(checkZero(n&(1<<i))) cnt++;
+//			cnt += (checkZero(n&(1<<i))?1:0);
 		return cnt;
 	}
 	private int[] matrix_square_to_strip(int[][] a, int[] g){
@@ -132,7 +140,7 @@ public class Compute {
 			BufferedWriter out = new BufferedWriter(new FileWriter(mFilename));
 			for(int i=0; i<Math.pow(2, n); i++){
 				String resultString= "";
-				int[] g= new int[n], gind= new int[n], a, x, tempvalue;
+				int[] g= new int[n], gind= new int[n], a, x;
 				ArrayList<Integer> c= new ArrayList<Integer>();
 				for(int j=0; j<n; j++){
 					gind[j]= checkZero(i&(1<<j))?1:0;
@@ -151,16 +159,10 @@ public class Compute {
 					c.remove(Integer.valueOf(-n));
 					if(c.size() == 0){
 						resultString+="bent      :: ";
-						System.out.print("bent      :: ");
 						resultString+=Integer.toString(gind[0]);
-						System.out.print(gind[0]);
-						for(int j=1; j<n; j++) {
-							System.out.print(", "+gind[j]);
-							resultString+=Integer.toString(gind[j]);
-						}
+						for(int j=1; j<n; j++) resultString+=", "+Integer.toString(gind[j]);
 						out.write(resultString);
 						out.newLine();
-						System.out.println();
 					}
 				} else if(c.size() == 3){
 					c.remove(Integer.valueOf(n*2));
@@ -168,22 +170,15 @@ public class Compute {
 					c.remove(Integer.valueOf(0));
 					if(c.size() == 0){
 						resultString+="semi-bent :: ";
-						System.out.print("semi-bent :: ");
 						resultString+=Integer.toString(gind[0]);
-						System.out.print(gind[0]);
-						for(int j=1; j<n; j++) {
-							System.out.print(", "+gind[j]);
-							resultString+=Integer.toString(gind[j]);
-						}
+						for(int j=1; j<n; j++) resultString+=", "+Integer.toString(gind[j]);
 						out.write(resultString);
 						out.newLine();
-						System.out.println();
 					}
 				}
 			}
-			System.out.println("-------------------------------------------------------------------program finished");
+			System.out.println("program finished");
 			out.write("-------------------------------------------------------------------program finished");
-			out.newLine();
 			out.close();
 		} catch(IOException e){
 			e.printStackTrace();

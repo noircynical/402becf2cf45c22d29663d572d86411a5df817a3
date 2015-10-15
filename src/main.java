@@ -9,6 +9,8 @@ public class main {
 		System.out.print("input the filename :: ");
 		filename=scanner.nextLine();
 		System.out.print("input the function :: ");
+		long start= System.currentTimeMillis();
 		Compute com= new Compute(scanner.nextLine(), filename);
+		System.out.println(System.currentTimeMillis()-start);
 	}
 }
