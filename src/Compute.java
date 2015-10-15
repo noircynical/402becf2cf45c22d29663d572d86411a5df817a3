@@ -6,13 +6,15 @@ import java.util.StringTokenizer;
 
 public class Compute {
 	private int n, t;
+	private String mFilename= null;
 	private ArrayList<Term> functionterm= new ArrayList<Term>();
 	private ArrayList<Variable> var= new ArrayList<Variable>();
 	private int[][] mat= null;
 	private int[] coeff= null;
 	private int[] order= null;
 	
-	public Compute(String function){
+	public Compute(String function, String filename){
+		mFilename= filename;
 		function= function.substring(2);
 		parse(function);
 		makeMatrix(n);
@@ -127,7 +129,7 @@ public class Compute {
 
 	public void compute(){
 		try{
-			BufferedWriter out = new BufferedWriter(new FileWriter("lee_output.txt"));
+			BufferedWriter out = new BufferedWriter(new FileWriter(mFilename));
 			for(int i=0; i<Math.pow(2, n); i++){
 				String resultString= "";
 				int[] g= new int[n], gind= new int[n], a, x, tempvalue;
